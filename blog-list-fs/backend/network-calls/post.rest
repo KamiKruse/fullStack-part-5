@@ -1,0 +1,72 @@
+POST http://localhost:3003/api/blogs
+content-type: application/json
+
+{
+    "title":"new blog 2 ",
+    "author": "Vivek",
+    "url": "vivek.works",
+    "likes": "2"
+}
+
+### Create first user
+POST http://localhost:3003/api/users
+content-type: application/json
+
+{
+     "username": "test",
+        "name": "vivek",
+      "password": "t1"
+}
+
+
+### Create second user
+POST http://localhost:3003/api/users
+content-type: application/json
+
+{
+     "username": "test1",
+        "name": "vivek1",
+      "password": "t2"
+}
+### Create third 'proper' user
+POST http://localhost:3003/api/users
+content-type: application/json
+
+{
+     "username": "test3",
+        "name": "vivek3",
+      "password": "properPassword"
+}
+
+### Create blog for user vivek1
+POST http://localhost:3003/api/blogs
+content-type: application/json
+
+{
+    "title":"Testing blog addition with user details",
+    "author": "Vivek",
+    "url": "vivek.works",
+    "likes": "2",
+    "id": "682591a62f1b6e96720c0cc9"
+}
+
+### Create blog for user vivek
+POST http://localhost:3003/api/blogs
+content-type: application/json
+
+{
+    "title":"Testing 4",
+    "author": "Vivek",
+    "url": "vivek.works",
+    "likes": "2",
+    "userId": "682591a62f1b6e96720c0cc9"
+}
+
+### Create valid login
+POST http://localhost:3003/api/login
+content-type: application/json
+
+{
+     "username": "test3",
+     "password": "properPassword"
+}
