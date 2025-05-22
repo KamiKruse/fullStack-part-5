@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import Blog from "./Blog";
 import loginService from "./services/login";
 import blogService from "./services/blogs";
 
@@ -10,8 +11,14 @@ function App() {
   const [errorMessage, setErrorMessage] = useState(null);
 
   useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs));
-  }, []);
+    if(!user){
+      setErrorMessage('valid user not found')
+      return
+    } else {
+      blogService.getAll(user.id).then((blogs) => setBlogs(blogs));
+    }
+    
+  }, [user]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -27,7 +34,6 @@ function App() {
       }, 5000);
     }
   };
-
   const loginForm = () => (
     <form onSubmit={handleSubmit}>
       <div>
@@ -51,7 +57,6 @@ function App() {
       <button type="submit">Log in</button>
     </form>
   );
-
   return (
     <main>
       <h1>Log in to application</h1>
@@ -63,7 +68,7 @@ function App() {
           <h2>Blogs</h2>
           <ul>
             {blogs.map((blog) => (
-              <li key={blog.id}>{blog.title}</li>
+              <Blog key={blog.id} id={blog.id} title={blog.title} author={blog.author} />
             ))}
           </ul>
         </div>
