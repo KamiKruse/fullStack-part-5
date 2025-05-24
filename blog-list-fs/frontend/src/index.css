@@ -1,4 +1,18 @@
 *{
-  background-color: gray;
-  color: white;
+  background-color: white;
+  color: rgb(29, 29, 29);
+}
+.notification {
+  padding:1rem 0.5rem;
+  border-radius: 4px;
+}
+.notification.error {
+   background-color: rgb(255, 223, 223);
+  color: rgb(221, 59, 59);
+  border: 2px solid rgb(221, 59, 59)
+}
+.notification.success {
+   background-color: rgb(208, 248, 208);
+  color: rgb(43, 169, 43);
+  border: 2px solid rgb(43, 169, 43)
 }

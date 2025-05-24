@@ -16,10 +16,29 @@ const getAll = async (userId) => {
         }
       }
     }
+    
     return arr;
   } catch (error) {
     throw new Error(`${error} : Error getting blogs`);
   }
 };
+let token = null
+const setToken = newToken => {
+  token = `Bearer ${newToken}`
+}
+const create = async blogObj => {
+  const config = {
+    headers: {
+      Authorization: token,
+    },
+  };
+  try {
+     const response = await axios.post(baseUrl, blogObj, config);
+     return response.data;
+  } catch (error) {
+    throw new Error(`${error} : Error creating blogs`);
+  }
+ 
+}
 
-export default { getAll };
+export default { getAll, create, setToken };

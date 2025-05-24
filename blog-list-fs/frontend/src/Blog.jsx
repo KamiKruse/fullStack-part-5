@@ -1,5 +1,19 @@
-export default function Blog(props){
+export default function Blog(props) {
   return (
-    <li>{props.title} by {props.author}</li>
-  )
+    <>
+      <h2>Blogs</h2>
+      <ul>
+        {props.blogs.map((blog) => (
+          <li
+            key={blog.id}
+            id={blog.id}
+            title={blog.title}
+            author={blog.author}
+          >
+            {blog.title} by {blog.author}
+          </li>
+        ))}
+      </ul>
+    </>
+  );
 }
