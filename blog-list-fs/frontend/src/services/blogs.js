@@ -38,7 +38,20 @@ const create = async blogObj => {
   } catch (error) {
     throw new Error(`${error} : Error creating blogs`);
   }
- 
 }
 
-export default { getAll, create, setToken };
+const update = async blog => {
+  const config = {
+    headers: {
+      Authorization: token,
+    },
+  }
+  const { id } = blog 
+  try {
+    const response = await axios.put(`${baseUrl}/${id}`, blog, config)
+    return response.data
+  } catch(error){
+    throw new Error(`${error} : Error updating likes`);
+  }
+}
+export default { getAll, create, setToken, update };

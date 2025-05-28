@@ -5,27 +5,29 @@ import Login from "./Login";
 import Notification from "./Notification";
 import loginService from "./services/login";
 import blogService from "./services/blogs";
+import Togglable from "./Togglable";
 
 function App() {
   const [user, setUser] = useState(null);
   const [blogs, setBlogs] = useState([]);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [newBlog, setNewBlog] = useState({
-    title: "",
-    author: "",
-    url: "",
-  });
   const [errorMessage, setErrorMessage] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
 
   useEffect(() => {
     if (!user) {
+      setBlogs([])
       return;
     } else {
-      blogService.getAll(user.id).then((blogs) => setBlogs(blogs));
+      blogService
+        .getAll(user.id)
+        .then((blogs) => setBlogs(blogs))
+        .catch((error) => {
+          setErrorMessage(`${error} : Could not load blogs`);
+        });
     }
-  }, [user, blogs]);
+  }, [user]);
 
   useEffect(() => {
     const loggedInUser = window.localStorage.getItem("loggedInUser");
@@ -34,7 +36,13 @@ function App() {
       setUser(user);
     }
   }, []);
-
+  const onBlogUpdate = async (blogFromServer) => {
+    setBlogs((prev) =>
+      prev.map((blog) =>
+        blog.id === blogFromServer.id ? blogFromServer : blog
+      )
+    );
+  };
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
@@ -56,31 +64,7 @@ function App() {
       }, 3000);
     }
   };
-  const handleBlog = async (event) => {
-    event.preventDefault();
-    try {
-      blogService.setToken(user.token);
-      const response = await blogService.create(newBlog);
-      if (response) {
-        setNewBlog({
-          title: "",
-          author: "",
-          url: "",
-        });
-        setSuccessMessage(
-          `a new blog ${newBlog.title} by ${newBlog.author} added`
-        );
-        setTimeout(() => {
-          setSuccessMessage(null);
-        }, 4000);
-      }
-    } catch (error) {
-      setErrorMessage(error);
-      setTimeout(() => {
-        setErrorMessage(null);
-      }, 4000);
-    }
-  };
+
   const handleLogOut = () => {
     window.localStorage.removeItem("loggedInUser");
     location.reload();
@@ -104,31 +88,19 @@ function App() {
           ) : null}
           <p>{user.name} logged in</p>
           <button onClick={handleLogOut}>logout</button>
-          <NewBlog
-            handleBlog={handleBlog}
-            newBlog={newBlog}
-            onTitleChange={(e) =>
-              setNewBlog((prev) => ({
-                ...prev,
-                title: e.target.value,
-              }))
-            }
-            onAuthorChange={(e) =>
-              setNewBlog((prev) => ({
-                ...prev,
-                author: e.target.value,
-              }))
-            }
-            onURLChange={(e) =>
-              setNewBlog((prev) => ({
-                ...prev,
-                url: e.target.value,
-              }))
-            }
-            error={errorMessage}
-            success={successMessage}
+          <Togglable buttonLabel="New Blog">
+            <NewBlog
+              user={user}
+              setErrorMessage={setErrorMessage}
+              setSuccessMessage={setSuccessMessage}
+            />
+          </Togglable>
+          <Blog
+            blogs={blogs}
+            user={user}
+            setErrorMessage={setErrorMessage}
+            onBlogUpdate={onBlogUpdate}
           />
-          <Blog blogs={blogs} />
         </div>
       )}
     </main>
