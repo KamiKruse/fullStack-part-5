@@ -3,7 +3,6 @@ import blogService from "./services/blogs";
 
 export default function Blog(props) {
   const [isHidden, setIsHidden] = useState({});
-  const [likes, setLikes] = useState({});
   const [localLikes, setLocalLikes] = useState({});
 
   useEffect(() => {
@@ -28,15 +27,15 @@ export default function Blog(props) {
     const originalBlog = props.blogs.find(blog => blog.id === id)
     const originalLikes = localLikes[id] !== undefined ? localLikes[id] : originalBlog.likes
     const updatedLikes = originalLikes + 1
-    setLikes((prev) => {
+    setLocalLikes((prev) => {
       return { ...prev, [id]: updatedLikes };
     });
     
     if (!originalBlog) {
       props.setErrorMessage(`Blog with ${id} does not exist`);
-      setLikes((prev) => ({
+      setLocalLikes((prev) => ({
         ...prev,
-        [id]: (prev[id] || 1) - 1,
+        [id]: originalLikes,
       }));
       return;
     }
@@ -50,7 +49,7 @@ export default function Blog(props) {
       if(props.onBlogUpdate){
         props.onBlogUpdate(response)
       }
-      setLikes((prev) => ({
+      setLocalLikes((prev) => ({
         ...prev,
         [response.id]: response.likes,
       }));
@@ -67,9 +66,9 @@ export default function Blog(props) {
           props.setErrorMessage(null);
         }, 4000);
       }
-      setLikes((prev) => ({
+      setLocalLikes((prev) => ({
         ...prev,
-        [id]: (prev[id] || 1) - 1,
+        [id]: originalLikes,
       }));
     }
   };

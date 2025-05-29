@@ -61,7 +61,7 @@ function App() {
       setErrorMessage(`Wrong username or password`);
       setTimeout(() => {
         setErrorMessage(null);
-      }, 3000);
+      }, 6000);
     }
   };
 
