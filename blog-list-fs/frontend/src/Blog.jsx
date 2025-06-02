@@ -1,19 +1,35 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import blogService from "./services/blogs";
 
 export default function Blog(props) {
   const [isHidden, setIsHidden] = useState({});
   const [localLikes, setLocalLikes] = useState({});
 
+  const sortedPropEntries = useMemo(() => {
+    if (!props.blogs || props.blogs.length === 0) {
+      return [];
+    }
+    const getEffectiveLikes = (blog) => {
+      return localLikes[blog.id] !== undefined
+        ? localLikes[blog.id]
+        : blog.likes;
+    };
+
+    const copiedBlogs = [...props.blogs];
+    return copiedBlogs.sort((a, b) => {
+      return getEffectiveLikes(b) - getEffectiveLikes(a);
+    });
+  }, [props.blogs, localLikes]);
+
   useEffect(() => {
     if (props.blogs && props.blogs.length > 0) {
       const initialLikes = props.blogs.reduce((acc, blog) => {
         acc[blog.id] = blog.likes;
         return acc;
-      }, {})
+      }, {});
       setLocalLikes(initialLikes);
-    }else {
-      setLocalLikes({})
+    } else {
+      setLocalLikes({});
     }
   }, [props.blogs]);
 
@@ -24,13 +40,14 @@ export default function Blog(props) {
   };
 
   const handleLikes = async (id) => {
-    const originalBlog = props.blogs.find(blog => blog.id === id)
-    const originalLikes = localLikes[id] !== undefined ? localLikes[id] : originalBlog.likes
-    const updatedLikes = originalLikes + 1
+    const originalBlog = props.blogs.find((blog) => blog.id === id);
+    const originalLikes =
+      localLikes[id] !== undefined ? localLikes[id] : originalBlog.likes;
+    const updatedLikes = originalLikes + 1;
     setLocalLikes((prev) => {
       return { ...prev, [id]: updatedLikes };
     });
-    
+
     if (!originalBlog) {
       props.setErrorMessage(`Blog with ${id} does not exist`);
       setLocalLikes((prev) => ({
@@ -45,8 +62,8 @@ export default function Blog(props) {
         blogService.setToken(props.user.token);
       }
       const response = await blogService.update(payload);
-      if(props.onBlogUpdate){
-        props.onBlogUpdate(response)
+      if (props.onBlogUpdate) {
+        props.onBlogUpdate(response);
       }
       setLocalLikes((prev) => ({
         ...prev,
@@ -72,11 +89,19 @@ export default function Blog(props) {
     }
   };
 
+  if (!sortedPropEntries || !Array.isArray(sortedPropEntries)) {
+    console.error(
+      "sortedPropEntries is not an array before rendering map:",
+      sortedPropEntries
+    );
+    return <p>Error: Blogs data is currently unavailable.</p>; // Or some other fallback UI
+  }
+
   return (
     <>
       <h2>Blogs</h2>
       <ul style={{ margin: "0", padding: "0" }}>
-        {props.blogs.map((blog) => (
+        {sortedPropEntries.map((blog) => (
           <li
             key={blog.id}
             id={blog.id}
