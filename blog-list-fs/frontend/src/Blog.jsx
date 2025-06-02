@@ -45,7 +45,6 @@ export default function Blog(props) {
         blogService.setToken(props.user.token);
       }
       const response = await blogService.update(payload);
-      props.onBlogUpdate(response);
       if(props.onBlogUpdate){
         props.onBlogUpdate(response)
       }
