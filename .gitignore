@@ -4,3 +4,7 @@ node_modules
 dist
 build
 .vscode/
+fixdbreferences.js
+fixTest1.js
+testLearningCode.js
+frontend/.vite/
