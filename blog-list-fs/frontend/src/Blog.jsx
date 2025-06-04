@@ -97,6 +97,33 @@ export default function Blog(props) {
     return <p>Error: Blogs data is currently unavailable.</p>; // Or some other fallback UI
   }
 
+  const handleDelete = async (id) => {
+    const findBlog = props.blogs.find((blog) => blog.id === id);
+    if (!findBlog) {
+      props.setErrorMessage(`Blog with ${id} does not exist`);
+    }
+    try {
+      if (props.user && props.user.token) {
+        blogService.setToken(props.user.token);
+      }
+      await blogService.deleteBlog(findBlog);
+      props.onBlogDelete(findBlog);
+    } catch (error) {
+      console.error(
+        "Error updating blog:",
+        error.response?.data || error.message
+      );
+      if (props.setErrorMessage) {
+        props.setErrorMessage(
+          error.response?.data?.error || "Failed to delete blog"
+        );
+        setTimeout(() => {
+          props.setErrorMessage(null);
+        }, 4000);
+      }
+    }
+  };
+
   return (
     <>
       <h2>Blogs</h2>
@@ -133,6 +160,9 @@ export default function Blog(props) {
                 <div>
                   <span>User: </span> {blog.user.username}{" "}
                 </div>
+                <button onClick={() => handleDelete(blog.id)}>
+                  Delete Blog
+                </button>
               </>
             )}
           </li>

@@ -36,6 +36,7 @@ function App() {
       setUser(user);
     }
   }, []);
+
   const onBlogUpdate = async (blogFromServer) => {
     setBlogs((prev) =>
       prev.map((blog) =>
@@ -43,6 +44,10 @@ function App() {
       )
     );
   };
+
+  const onBlogDelete = (blogToBeDeleted) => {
+    setBlogs((prev) => prev.filter((blog) => blog.id !== blogToBeDeleted.id ))
+  }
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
@@ -100,6 +105,7 @@ function App() {
             user={user}
             setErrorMessage={setErrorMessage}
             onBlogUpdate={onBlogUpdate}
+            onBlogDelete={onBlogDelete}
           />
         </div>
       )}
