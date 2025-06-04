@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect} from "react";
 import Blog from "./Blog";
 import NewBlog from "./NewBlog";
 import Login from "./Login";
@@ -27,7 +27,7 @@ function App() {
           setErrorMessage(`${error} : Could not load blogs`);
         });
     }
-  }, [user]);
+  }, [user, blogs]);
 
   useEffect(() => {
     const loggedInUser = window.localStorage.getItem("loggedInUser");
@@ -44,10 +44,10 @@ function App() {
       )
     );
   };
-
   const onBlogDelete = (blogToBeDeleted) => {
     setBlogs((prev) => prev.filter((blog) => blog.id !== blogToBeDeleted.id ))
   }
+  
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {

@@ -1,17 +1,25 @@
 import Notification from "./Notification";
-export default function Login(props) {
+import PropTypes from 'prop-types'
+export default function Login({
+  handleSubmit,
+  onUserNameChange,
+  onPasswordChange,
+  username,
+  password,
+  error
+}) {
   return (
     <>
       <h1>Log in to application</h1>
-      {props.error && <Notification err={props.error} />}
-      <form onSubmit={props.handleSubmit}>
+      {error && <Notification err={error} />}
+      <form onSubmit={handleSubmit}>
         <div>
           <label htmlFor="username">Username</label>
           <input
             type="text"
             id="username"
-            value={props.username}
-            onChange={props.onUserNameChange}
+            value={username}
+            onChange={onUserNameChange}
           />
         </div>
         <div>
@@ -19,8 +27,8 @@ export default function Login(props) {
           <input
             type="password"
             id="password"
-            value={props.password}
-            onChange={props.onPasswordChange}
+            value={password}
+            onChange={onPasswordChange}
           />
         </div>
         <button type="submit">Log in</button>
@@ -28,3 +36,11 @@ export default function Login(props) {
     </>
   );
 }
+Login.propTypes = {
+  handleSubmit: PropTypes.func.isRequired,
+  onUserNameChange: PropTypes.func.isRequired,
+  onPasswordChange: PropTypes.func.isRequired,
+  username: PropTypes.string.isRequired,
+  password: PropTypes.string.isRequired,
+  error: PropTypes.string.isRequired
+};
