@@ -44,6 +44,7 @@ function App() {
       )
     );
   };
+  
   const onBlogDelete = (blogToBeDeleted) => {
     setBlogs((prev) => prev.filter((blog) => blog.id !== blogToBeDeleted.id ))
   }

@@ -1,5 +1,5 @@
 import js from "@eslint/js";
-import globals from "globals";
+import globals, { browser, es2020 } from "globals";
 import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from "eslint-plugin-react-refresh";
 
@@ -7,11 +7,17 @@ export default [
   { ignores: ["dist"] },
   {
     files: ["**/*.{js,jsx}"],
+    env: {
+      browser: true,
+      es2020: true,
+      "vitest-globals/env": true,
+    },
     extends: [
       "eslint:recommended",
       "plugin:react/recommended",
       "plugin:react/jsx-runtime",
       "plugin:react-hooks/recommended",
+      "plugin:vitest-globals/recommended",
       "prettier",
     ],
     languageOptions: {

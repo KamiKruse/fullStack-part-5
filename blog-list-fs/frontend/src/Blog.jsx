@@ -41,21 +41,14 @@ export default function Blog(props) {
 
   const handleLikes = async (id) => {
     const originalBlog = props.blogs.find((blog) => blog.id === id);
+    if (!originalBlog) {
+      props.setErrorMessage(`Blog with ${id} does not exist`)
+      return
+    }
     const originalLikes =
       localLikes[id] !== undefined ? localLikes[id] : originalBlog.likes;
     const updatedLikes = originalLikes + 1;
-    setLocalLikes((prev) => {
-      return { ...prev, [id]: updatedLikes };
-    });
-
-    if (!originalBlog) {
-      props.setErrorMessage(`Blog with ${id} does not exist`);
-      setLocalLikes((prev) => ({
-        ...prev,
-        [id]: originalLikes,
-      }));
-      return;
-    }
+   
     const payload = { ...originalBlog, likes: updatedLikes };
     try {
       if (props.user && props.user.token) {
@@ -140,6 +133,7 @@ export default function Blog(props) {
               padding: "8px",
               marginBottom: "16px",
             }}
+            className="blog"
           >
             {blog.title} by {blog.author}
             <button onClick={() => toggleVisible(blog.id)}>
@@ -147,10 +141,10 @@ export default function Blog(props) {
             </button>
             {isHidden[blog.id] && (
               <>
-                <div>
+                <div className="url">
                   <span>URL: </span> {blog.url}{" "}
                 </div>
-                <div>
+                <div className="likes">
                   <span>Likes: </span>{" "}
                   {localLikes[blog.id] !== undefined
                     ? localLikes[blog.id]
