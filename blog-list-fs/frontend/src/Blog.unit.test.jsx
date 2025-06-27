@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import { prettyDOM } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import Blog from './Blog'
 
 describe('Blog list component', () => {
@@ -14,6 +15,7 @@ describe('Blog list component', () => {
       user: { username: 'testuser' },
     },
   ]
+  
   beforeEach(() => {
     container = render(
       <Blog
@@ -31,12 +33,26 @@ describe('Blog list component', () => {
     )
     expect(element).toBeInTheDocument()
   })
-  test('does not show url', () => {
+  test('does not show url by default', () => {
     const urlContainer = container.querySelector('.url')
     expect(urlContainer).toBe(null)
   })
-  test('does not show likes', () => {
+  test('does not show likes by default', () => {
     const urlContainer = container.querySelector('.likes')
     expect(urlContainer).toBe(null)
+  })
+  test('url visible upon clicking view button', async ()=>{
+    const user = userEvent.setup()
+    const button = screen.getByText('view')
+    await user.click(button)
+    const div = container.querySelector('.urlLikesVisible')
+    expect(div).not.toHaveStyle('display:none')
+  })
+  test('likes visible upon clicking view button', async ()=>{
+    const user = userEvent.setup()
+    const button = screen.getByText('view')
+    await user.click(button)
+    const div = container.querySelector('.urlLikesVisible')
+    expect(div).not.toHaveStyle('display:none')
   })
 })

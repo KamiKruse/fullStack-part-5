@@ -120,7 +120,7 @@ export default function Blog(props) {
   return (
     <>
       <h2>Blogs</h2>
-      <ul style={{ margin: "0", padding: "0" }}>
+      <ul style={{ margin: '0', padding: '0' }}>
         {sortedPropEntries.map((blog) => (
           <li
             key={blog.id}
@@ -128,40 +128,41 @@ export default function Blog(props) {
             title={blog.title}
             author={blog.author}
             style={{
-              border: "1px solid black",
-              listStyle: "none",
-              padding: "8px",
-              marginBottom: "16px",
+              border: '1px solid black',
+              listStyle: 'none',
+              padding: '8px',
+              marginBottom: '16px',
             }}
-            className="blog"
+            className='blog'
           >
             {blog.title} by {blog.author}
             <button onClick={() => toggleVisible(blog.id)}>
-              {isHidden[blog.id] ? "hide" : "view"}
+              {isHidden[blog.id] ? 'hide' : 'view'}
             </button>
             {isHidden[blog.id] && (
-              <>
-                <div className="url">
-                  <span>URL: </span> {blog.url}{" "}
+              <div className='urlLikesVisible'>
+                <div className='url'>
+                  <span>URL: {blog.url} </span>
                 </div>
-                <div className="likes">
-                  <span>Likes: </span>{" "}
-                  {localLikes[blog.id] !== undefined
-                    ? localLikes[blog.id]
-                    : blog.likes}
+                <div className='likes'>
+                  <span>
+                    Likes:{localLikes[blog.id] !== undefined
+                      ? localLikes[blog.id]
+                      : blog.likes}
+                  </span>
                   <button onClick={() => handleLikes(blog.id)}>Like</button>
                 </div>
                 <div>
-                  <span>User: </span> {blog.user.username}{" "}
+                  <span>User: {blog.user.username} </span>
                 </div>
                 <button onClick={() => handleDelete(blog.id)}>
                   Delete Blog
                 </button>
-              </>
+              </div>
             )}
           </li>
         ))}
       </ul>
     </>
-  );
+  )
 }
