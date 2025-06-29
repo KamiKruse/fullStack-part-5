@@ -1,76 +1,66 @@
-import blogService from "./services/blogs";
-import { useState } from "react";
+import blogService from './services/blogs'
+import { useState } from 'react'
+import NewBlogForm from './NewBlogForm'
 
 export default function NewBlog(props) {
   const [newBlog, setNewBlog] = useState({
-    title: "",
-    author: "",
-    url: "",
-  });
+    title: '',
+    author: '',
+    url: '',
+  })
   const handleBlog = async (event) => {
-    event.preventDefault();
+    event.preventDefault()
     try {
-      blogService.setToken(props.user.token);
-      const response = await blogService.create(newBlog);
+      blogService.setToken(props.user.token)
+      const response = await blogService.create(newBlog)
       if (response) {
         setNewBlog({
-          title: "",
-          author: "",
-          url: "",
-        });
+          title: '',
+          author: '',
+          url: '',
+        })
         props.setSuccessMessage(
           `a new blog ${newBlog.title} by ${newBlog.author} added`
-        );
+        )
         setTimeout(() => {
-          props.setSuccessMessage(null);
-        }, 4000);
+          props.setSuccessMessage(null)
+        }, 4000)
       }
     } catch (error) {
-      props.setErrorMessage(error);
+      props.setErrorMessage(error)
       setTimeout(() => {
-        props.setErrorMessage(null);
-      }, 4000);
+        props.setErrorMessage(null)
+      }, 4000)
     }
-  };
+  }
+  const handleOnTitleChange = (e) => {
+    setNewBlog((prev) => ({
+      ...prev,
+      title: e.target.value,
+    }))
+  }
+  const handleOnAuthorChange = (e) => {
+    setNewBlog((prev) => ({
+      ...prev,
+      author: e.target.value,
+    }))
+  }
+  const handleOnURLChange = (e) => {
+    setNewBlog((prev) => ({
+      ...prev,
+      url: e.target.value,
+    }))
+  }
   return (
     <>
       <h2>Add Blogs</h2>
-      <form onSubmit={handleBlog}>
-        <label>Title: </label>
-        <input
-          value={newBlog.title}
-          onChange={(e) =>
-            setNewBlog((prev) => ({
-              ...prev,
-              title: e.target.value,
-            }))
-          }
-          required
-        />
-        <label>Author: </label>
-        <input
-          value={newBlog.author}
-          onChange={(e) =>
-            setNewBlog((prev) => ({
-              ...prev,
-              author: e.target.value,
-            }))
-          }
-          required
-        />
-        <label>Url: </label>
-        <input
-          value={newBlog.url}
-          onChange={(e) =>
-            setNewBlog((prev) => ({
-              ...prev,
-              url: e.target.value,
-            }))
-          }
-          required
-        />
-        <button>Add Blog</button>
-      </form>
+      <NewBlogForm
+        handleBlog={handleBlog}
+        newBlog={newBlog}
+        handleOnTitleChange={handleOnTitleChange}
+        handleOnAuthorChange={handleOnAuthorChange}
+        handleOnURLChange={handleOnURLChange}
+      />
     </>
-  );
+  )
 }
