@@ -23,20 +23,10 @@ test('Testing NewBlogForm', async () => {
       handleOnURLChange={mockHandlerURL}
     />
   )
-  // const inputTitle = screen.getByPlaceholderText('Blog Title')
-  // const inputAuthor = screen.getByPlaceholderText('Blog Author')
-  // const inputURL = screen.getByPlaceholderText('Blog URL')
+  
   const addBlogBtn = screen.getByRole('button', {name: 'Add Blog'})
 
-  // await user.type(inputTitle, 'New Blog added')
-  // await user.type(inputAuthor, 'testuser')
-  // await user.type(inputURL, 'www.testuser.com')
   await user.click(addBlogBtn)
-
-  // expect(mockHandlerTitle.mock.calls).toHaveLength('New Blog added'.length)
-  // expect(mockHandlerAuthor.mock.calls).toHaveLength('testuser'.length)
-  // expect(mockHandlerURL.mock.calls).toHaveLength('www.testuser.com'.length)
-  
 
   expect(mockHandlerHandleBlog).toHaveBeenCalledTimes(1)
 })
