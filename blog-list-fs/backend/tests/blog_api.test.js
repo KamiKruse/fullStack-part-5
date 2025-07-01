@@ -1,6 +1,7 @@
-const { test, after, beforeEach, describe } = require('node:test')
+const { test, after, beforeEach, describe, before } = require('node:test')
 const assert = require('node:assert')
 const mongoose = require('mongoose')
+const config = require('../utils/config')
 const app = require('../app')
 const supertest = require('supertest')
 const api = supertest(app)
@@ -8,6 +9,11 @@ const Blog = require('../models/blog')
 const helper = require('./helper.test')
 const bcrypt = require('bcrypt')
 const User = require('../models/user')
+
+before(async() => {
+  await mongoose.connection.close()
+  await mongoose.connect(config.MONGODB_URI)
+})
 
 describe('when some blogs exist', () => {
   beforeEach(async () => {
@@ -18,12 +24,13 @@ describe('when some blogs exist', () => {
     await helper.createUser(helper.initialUsers[1])
 
     const users = await helper.usersInDB()
-    helper.initialBlogs.forEach((blog) => {
-      blog.user = users[0].id
-    })
-    await Blog.insertMany(helper.initialBlogs)
+    const blogsToInsert = helper.initialBlogs.map((blog) => ({
+      ...blog,
+      user: users[0].id,
+    }))
+    await Blog.insertMany(blogsToInsert)
   })
-  describe('testing GET route for viewing blogs', async () => {
+  describe('testing GET route for viewing blogs', () => {
     test('expect get to return application/json format', async () => {
       const blogsDB = await helper.blogsInDB()
       const dbBlogs = await api
@@ -51,21 +58,7 @@ describe('when some blogs exist', () => {
     })
   })
 
-  describe('addition of a blog to the db using post', async () => {
-    beforeEach(async () => {
-      await User.deleteMany({})
-      await Blog.deleteMany({})
-      await helper.createUser(helper.initialUsers[0])
-      await helper.createUser(helper.initialUsers[1])
-      const users = await helper.usersInDB()
-      const userId = users[0].id
-      const blogsToInsert = helper.initialBlogs.map(blog => ({ ...blog, user: userId }))
-      const insertedBlogs = await Blog.insertMany(blogsToInsert)
-
-      const user = await User.findById(userId)
-      user.blogs = insertedBlogs.map(blog => blog._id)
-      await user.save()
-    })
+  describe('addition of a blog to the db using post', () => {
     test('testing valid login', async () => {
       const loginDetail = {
         username: 'Test1',
@@ -110,21 +103,7 @@ describe('when some blogs exist', () => {
         .expect(401)
     })
 
-    describe('testing post with various properties missing from blog', async () => {
-      beforeEach(async () => {
-        await User.deleteMany({})
-        await Blog.deleteMany({})
-        await helper.createUser(helper.initialUsers[0])
-        await helper.createUser(helper.initialUsers[1])
-        const users = await helper.usersInDB()
-        const userId = users[0].id
-        const blogsToInsert = helper.initialBlogs.map(blog => ({ ...blog, user: userId }))
-        const insertedBlogs = await Blog.insertMany(blogsToInsert)
-
-        const user = await User.findById(userId)
-        user.blogs = insertedBlogs.map(blog => blog._id)
-        await user.save()
-      })
+    describe('testing post with various properties missing from blog', () => {
       test('likes missing from the request', async () => {
         const users = helper.initialUsers
         const loginResponse = await api.post('/api/login').send({ username: users[0].username, password: users[0].password }).expect(200)
@@ -193,20 +172,6 @@ describe('when some blogs exist', () => {
   })
 
   describe('deletion of blogs from db', async () => {
-    beforeEach(async () => {
-      await User.deleteMany({})
-      await Blog.deleteMany({})
-      await helper.createUser(helper.initialUsers[0])
-      await helper.createUser(helper.initialUsers[1])
-      const users = await helper.usersInDB()
-      const userId = users[0].id
-      const blogsToInsert = helper.initialBlogs.map(blog => ({ ...blog, user: userId }))
-      const insertedBlogs = await Blog.insertMany(blogsToInsert)
-
-      const user = await User.findById(userId)
-      user.blogs = insertedBlogs.map(blog => blog._id)
-      await user.save()
-    })
     test('deletes a blog with status 204 if id is valid', async () => {
       const users = helper.initialUsers
       const loginResponse = await api.post('/api/login').send({ username: users[0].username, password: users[0].password }).expect(200)
@@ -237,21 +202,7 @@ describe('when some blogs exist', () => {
 
   })
 
-  describe('updating likes in a particular blog', async () => {
-    beforeEach(async () => {
-      await User.deleteMany({})
-      await Blog.deleteMany({})
-      await helper.createUser(helper.initialUsers[0])
-      await helper.createUser(helper.initialUsers[1])
-      const users = await helper.usersInDB()
-      const userId = users[0].id
-      const blogsToInsert = helper.initialBlogs.map(blog => ({ ...blog, user: userId }))
-      const insertedBlogs = await Blog.insertMany(blogsToInsert)
-
-      const user = await User.findById(userId)
-      user.blogs = insertedBlogs.map(blog => blog._id)
-      await user.save()
-    })
+  describe('updating likes in a particular blog', () => {
     test('updates a blog with status 201 for like updates', async () => {
       const users = helper.initialUsers
       const loginResponse = await api.post('/api/login').send({ username: users[0].username, password: users[0].password }).expect(200)
