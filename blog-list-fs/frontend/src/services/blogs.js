@@ -8,7 +8,7 @@ const getAll = async (userId) => {
     const response = await axios.get(baseUrl);
     const blogs = await response.data;
     for (const blog of blogs) {
-      if (blog.user === undefined) {
+      if (blog.user === undefined || blog.user === null) {
         continue;
       } else {
         if (blog.user.id === userId) {
